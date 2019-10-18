@@ -43,10 +43,10 @@ class Config():
     max_grad_norm = 15
     momentum = 0.9  #
     epoches = 5000
-    data_dir = '/home/zpl/comic_person/train_ban'
+    data_dir = '/home/zpl/qikan/train_ban/train_ban'
     mode = 'train'
     load_dir = '/home/zpl/comic_person/output_new/'
-    test_dir = '/home/zpl/comic_person/test_ban'
+    test_dir = '/home/zpl/qikan/test_ban/test_ban'
     output_new = '/home/zpl/comic_person/output_mixed/'
     period_before = -10
     period_after = 15
