@@ -37,11 +37,11 @@ class Config():
     max_grad_norm = 15
     momentum = 0.9  #
     epoches = 5000
-    data_dir = '/home/zpl/qikan_final/train_ban/train_ban'
+    data_dir = '/home/zpl/qikan/train_ban/train_ban'
     mode = 'train'
     load_dir = '/home/zpl/comic_person/output_new_random_shoulian2/'
-    test_dir = '/home/zpl/qikan_final/test_ban/test_ban'
-    gallery_dir = '/home/zpl/qikan_final/test_ban/test_ban'
+    test_dir = '/home/zpl/qikan/test_ban/test_ban'
+    gallery_dir = '/home/zpl/qikan/test_ban/test_ban'
     output_new = '/home/zpl/comic_person/output_10yuehou_expert_final_2_10_45_mixed/'
     period_before = -10
     period_after = 15
@@ -237,10 +237,6 @@ class pixel_attention_model():
     def semantic(self, img):  # input:[50, 8, 4, 512]
         img_sqr = tf.add(tf.multiply(img, img), img)
         img_global = tf.reduce_mean(input_tensor=img_sqr, axis=[1, 2])  # [50, 512]
-        # img_semantic = tf.layers.batch_normalization(
-        #    inputs=img_global, axis=1,
-        #    momentum=self._BATCH_NORM_DECAY, epsilon=self._BATCH_NORM_EPSILON, center=True,
-        #    scale=True, training=self.training, fused=True)
         fc_text = tf.expand_dims(input=tf.layers.dense(img_global, 128, tf.nn.relu,
                                                        name='fc_to_text', reuse=tf.AUTO_REUSE), axis=-1)
         return fc_text  # [50, 128, 1]
@@ -306,13 +302,9 @@ class pixel_attention_model():
         self.text_y_z = tf.placeholder(tf.float32, [self.batch_size, self.text_num_z, self.run_size_z])
         self.text_x = tf.placeholder(tf.float32, [self.batch_size, self.text_num, self.run_size])
         self.text_y = tf.placeholder(tf.float32, [self.batch_size, self.text_num, self.run_size])
-        # self.texts = tf.placeholder(tf.float32, [self.batch_size * 2, self.barrage_num], name='barrage document')
         self.lr = tf.placeholder(dtype=tf.float32, shape=None)
-        # still unknown
         self.block_fn = self._building_block_v1
         self.data_format = config.data_format
-        # GPU is available or not
-        # The number of classes used as labels.
         self.num_filters = config.num_filters  # The number of filters to use for the first block layer
         self.kernel_size = config.kernel_size  # kernel_size: The kernel size to use for convolution.
         self.conv_stride = config.conv_stride
@@ -336,11 +328,6 @@ class pixel_attention_model():
         inputs = self.conv2d_fixed_padding(
             inputs=inputs, filters=self.num_filters, kernel_size=self.kernel_size,
             strides=self.conv_stride, data_format=self.data_format)
-        # inputs = tf.identity(inputs, 'initial_conv')
-        # We do not include batch normalization or activation functions in V2
-        # for the initial conv1 because the first ResNet unit will perform these
-        # for both the shortcut and non-shortcut paths as part of the first
-        # block's projection. Cf. Appendix of [2].
         inputs = self.batch_norm(inputs, self.training, self.data_format)
         inputs = tf.nn.relu(inputs)
         self.resnet_feature[0] = inputs
@@ -524,4 +511,3 @@ class pixel_attention_model():
         self.update_ops = tf.get_collection(tf.GraphKeys.UPDATE_OPS)
         with tf.control_dependencies(self.update_ops):
             self.train = optimizer.apply_gradients(zip(grads, tvars))
-            # self.train = slim.learning.create_train_op(self.loss, optimizer, update_ops)
