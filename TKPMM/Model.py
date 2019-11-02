@@ -27,7 +27,7 @@ class Config():
     conv_stride = 2
     first_pool_size = 3
     first_pool_stride = 2
-    hot = 1.0
+    tem = 1.0
     batch_size = 50
     lr = 0.003
     image_height = 256
@@ -121,8 +121,6 @@ class pixel_attention_model():
         return tf.identity(inputs, name), layer_shape
 
     def difference_map(self, feature_map):
-        # feature_x_index = [i for i in range(self.batch_size * 2) if i % 2 == 0]
-        # feature_y_index = [i for i in range(self.batch_size * 2) if i % 2 == 1]
         feature_y = tf.transpose(feature_map[1::2, :, :, :], (0, 3, 1, 2))
         y_shape = feature_y.get_shape().as_list()
         feature_x = feature_map[::2, :, :, :]
@@ -315,7 +313,7 @@ class pixel_attention_model():
         self.isrichang = tf.placeholder(tf.bool)
         self.first_pool_size = config.first_pool_size
         self.first_pool_stride = config.first_pool_stride
-        self.hot = config.hot
+        self.tem = config.tem
         self.dtype = tf.float32
         self.momentum = config.momentum
         self.resnetlayer_shape = {}  # image shape after each block
